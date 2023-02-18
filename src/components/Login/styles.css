@@ -1,8 +1,9 @@
-@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
 
 :root {
   --success-color: #2ecc71;
   --error-color: #e74c3c;
+  --button-color: #3498db;
 }
 
 * {
@@ -11,7 +12,7 @@
 
 body {
   background-color: #f9fafb;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Roboto", sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,6 +25,12 @@ body {
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   width: 400px;
+}
+
+@media only screen and (max-width: 400px) {
+  .container {
+    min-height: 100vh;
+  }
 }
 
 h2 {
@@ -87,8 +94,8 @@ h2 {
 
 .form button {
   cursor: pointer;
-  background-color: #3498db;
-  border: 2px solid #3498db;
+  background-color: var(--button-color);
+  border: 2px solid var(--button-color);
   border-radius: 4px;
   color: #fff;
   display: block;

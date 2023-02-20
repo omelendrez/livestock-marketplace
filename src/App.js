@@ -4,9 +4,7 @@ import { router } from "./router/router";
 
 function App() {
   return (
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
+    <RouterProvider router={router} />
   );
 }
 

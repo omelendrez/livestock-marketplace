@@ -84,6 +84,7 @@ export const Login = () => {
               placeholder="Enter email"
               value={email.value}
               onChange={handleChange}
+              data-testid = "email"
             />
             <small>{email.error}</small>
           </div>
@@ -95,10 +96,11 @@ export const Login = () => {
               placeholder="Enter password"
               value={password.value}
               onChange={handleChange}
+              data-testid="password"
             />
             <small>{password.error}</small>
           </div>
-          <button type="button" className="submit" onClick={handleSubmit}>
+          <button type="button" className="submit" data-testid="submit-button" onClick={handleSubmit}>
             Login
           </button>
         </form>

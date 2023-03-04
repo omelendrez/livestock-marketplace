@@ -1,11 +1,10 @@
-// import { Login } from './components/Login';
-import { Register } from './components/register';
+import React from "react";
+import { RouterProvider, } from "react-router-dom";
+import { router } from "./router/router";
 
 function App() {
   return (
-    <div className="App">
-      <Register />
-    </div>
+    <RouterProvider router={router} />
   );
 }
 

@@ -1,14 +1,16 @@
 import { useRef, useState } from "react"
 import "./styles.css"
 import { isValidEmail } from "../../helpers/validations"
+import { login, getUsers } from "../../services/user"
+import LS, {KEYS} from "../../helpers/localStorage"
 
 const initialValues = {
   email: {
-    value: '',
+    value: 'mike@gmail.com',
     error: ''
   },
   password: {
-    value: '',
+    value: '12345',
     error: ''
   },
 }
@@ -62,12 +64,39 @@ export const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     errorsCount.current = 0
-    validatePasswordLength(['password'], 6)
+    validatePasswordLength(['password'], 5)
     validateEmail(['email'])
     validateNotEmpty(['email', 'password'])
     if (!errorsCount.current) {
-      console.log(JSON.stringify(values, null, 2))
+      const payload = {
+        email: values.email.value,
+        password: values.password.value
+      }
+      console.clear()
+      const local = new LS()
+
+      login(payload)
+        .then((res) => {
+          console.info(JSON.stringify(res, null, 2))
+          const token = res.data.token
+          local.save(KEYS.token, token)
+        })
+        .catch((e) => {
+          console.error(JSON.stringify(e, null, 2))
+        })
     }
+  }
+
+  const handleGet = (e) => {
+    console.clear()
+    getUsers()
+      .then((res) => {
+        console.info(JSON.stringify(res, null, 2))
+      })
+      .catch((e) => {
+        console.error(JSON.stringify(e, null, 2))
+      })
+
   }
 
   const { email, password } = values
@@ -84,6 +113,7 @@ export const Login = () => {
               placeholder="Enter email"
               value={email.value}
               onChange={handleChange}
+              data-testid = "email"
             />
             <small>{email.error}</small>
           </div>
@@ -95,11 +125,15 @@ export const Login = () => {
               placeholder="Enter password"
               value={password.value}
               onChange={handleChange}
+              data-testid="password"
             />
             <small>{password.error}</small>
           </div>
-          <button type="button" className="submit" onClick={handleSubmit}>
+          <button type="button" className="submit" data-testid="submit-button" onClick={handleSubmit}>
             Login
+          </button>
+          <button type="button" className="submit" onClick={handleGet}>
+            Get users
           </button>
         </form>
       </div>

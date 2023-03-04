@@ -1,9 +1,10 @@
-import { useRef, useState } from "react"
-import "./styles.css"
-import { isValidEmail, isValidateUserName } from "../../helpers/validations"
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import "./styles.css";
+import { isValidEmail, isValidUsername } from "../../helpers/validations";
 
 const initialValues = {
-  userName: {
+  username: {
     value: '',
     error: ''
   },
@@ -19,105 +20,106 @@ const initialValues = {
     value: '',
     error: ''
   }
-}
+};
 
 export const Register = () => {
-  const [values, setValues] = useState(initialValues)
-  const errorsCount = useRef(0)
+  const [values, setValues] = useState(initialValues);
+  const errorsCount = useRef(0);
 
   const validateNotEmpty = (ids) => {
-    const errMessage = 'This fields cannot be empty'
+    const errMessage = 'This fields cannot be empty';
     ids.forEach((id) => {
-      const data = values[id]
+      const data = values[id];
       if (!data.value) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const validateUserName = (ids) => {
-    const errMessage = 'Invalid Username'
+    const errMessage = 'Invalid username';
     ids.forEach((id) => {
-      const data = values[id]
-      if (!isValidateUserName(data.value)) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+      const data = values[id];
+      if (!isValidUsername(data.value)) {
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const validateEmail = (ids) => {
-    const errMessage = 'Invalid email address'
+    const errMessage = 'Invalid email address';
     ids.forEach((id) => {
-      const data = values[id]
+      const data = values[id];
       if (!isValidEmail(data.value)) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const validatePasswordLength = (ids, minLength) => {
-    const errMessage = `Password should be at least ${minLength} characters long`
+    const errMessage = `Password should be at least ${minLength} characters long`;
     ids.forEach((id) => {
-      const data = values[id]
+      const data = values[id];
       if (data.value.length < minLength) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const validateConfirmPassword = (ids) => {
-    const errMessage = 'password do no match'
+    const errMessage = 'Passwords do not match';
     ids.forEach((id) => {
-      const data = values[id]
-      if (password !== confirmPassword) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+      const data = values[id];
+      console.log(data);
+      if (data.value !== values['password'].value) {
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const handleChange = (e) => {
-    const { id, value } = e.target
+    const { id, value } = e.target;
     const data = {
       value,
       error: ''
-    }
-    setValues(values => ({ ...values, [id]: data }))
-  }
+    };
+    setValues(values => ({ ...values, [id]: data }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    errorsCount.current = 0
-    validatePasswordLength(['password'], 6)
-    validateEmail(['email'])
-    validateUserName(['userName'])
-    validateConfirmPassword(['confirmPassword'])
-    validateNotEmpty(['userName', 'email', 'password', 'confirmPassword'])
+    e.preventDefault();
+    errorsCount.current = 0;
+    validatePasswordLength(['password'], 6);
+    validateEmail(['email']);
+    validateUserName(['username']);
+    validateConfirmPassword(['confirmPassword']);
+    validateNotEmpty(['username', 'email', 'password', 'confirmPassword']);
     if (!errorsCount.current) {
-      console.log(JSON.stringify(values, null, 2))
+      console.log(JSON.stringify(values, null, 2));
     }
-  }
+  };
 
-  const { userName, email, password, confirmPassword } = values
+  const { username, email, password, confirmPassword } = values;
   return (
     <div className="container">
       <div>
         <form className="form" method="post">
           <h2>Register</h2>
-          <div className={`form-control ${userName.error ? 'error' : ''}`}>
+          <div className={`form-control ${username.error ? 'error' : ''}`}>
             <label>Username</label>
             <input
               type="text"
-              id="userName"
+              id="username"
               placeholder="Enter Username"
-              value={userName.value}
+              value={username.value}
               onChange={handleChange}
             />
-            <small>{userName.error}</small>
+            <small>{username.error}</small>
           </div>
           <div className={`form-control ${email.error ? 'error' : ''}`}>
             <label>Email</label>
@@ -153,10 +155,13 @@ export const Register = () => {
             <small>{confirmPassword.error}</small>
           </div>
           <button type="button" className="submit" onClick={handleSubmit}>
-            Login
+            Signup
           </button>
+          <div>
+            <p>Already registered? Click <Link to="/login">here</Link> to login</p>
+          </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};

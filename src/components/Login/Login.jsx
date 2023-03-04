@@ -1,8 +1,9 @@
-import { useRef, useState } from "react"
-import "./styles.css"
-import { isValidEmail } from "../../helpers/validations"
-import { login, getUsers } from "../../services/user"
-import LS, {KEYS} from "../../helpers/localStorage"
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./styles.css";
+import { isValidEmail } from "../../helpers/validations";
+import { login } from "../../services/user";
+import LS, { KEYS } from "../../helpers/localStorage";
 
 const initialValues = {
   email: {
@@ -13,93 +14,83 @@ const initialValues = {
     value: '12345',
     error: ''
   },
-}
+};
 
 export const Login = () => {
-  const [values, setValues] = useState(initialValues)
-  const errorsCount = useRef(0)
+  const navigate = useNavigate();
+  const [values, setValues] = useState(initialValues);
+  const errorsCount = useRef(0);
 
   const validateNotEmpty = (ids) => {
-    const errMessage = 'This fields cannot be empty'
+    const errMessage = 'This fields cannot be empty';
     ids.forEach((id) => {
-      const data = values[id]
+      const data = values[id];
       if (!data.value) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const validateEmail = (ids) => {
-    const errMessage = 'Invalid email address'
+    const errMessage = 'Invalid email address';
     ids.forEach((id) => {
-      const data = values[id]
+      const data = values[id];
       if (!isValidEmail(data.value)) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const validatePasswordLength = (ids, minLength) => {
-    const errMessage = `Password should be at least ${minLength} characters long`
+    const errMessage = `Password should be at least ${minLength} characters long`;
     ids.forEach((id) => {
-      const data = values[id]
+      const data = values[id];
       if (data.value.length < minLength) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }))
-        errorsCount.current++
+        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
+        errorsCount.current++;
       }
-    })
-  }
+    });
+  };
 
   const handleChange = (e) => {
-    const { id, value } = e.target
+    const { id, value } = e.target;
     const data = {
       value,
       error: ''
-    }
-    setValues(values => ({ ...values, [id]: data }))
-  }
+    };
+    setValues(values => ({ ...values, [id]: data }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    errorsCount.current = 0
-    validatePasswordLength(['password'], 5)
-    validateEmail(['email'])
-    validateNotEmpty(['email', 'password'])
+    e.preventDefault();
+    errorsCount.current = 0;
+    validatePasswordLength(['password'], 5);
+    validateEmail(['email']);
+    validateNotEmpty(['email', 'password']);
     if (!errorsCount.current) {
       const payload = {
         email: values.email.value,
         password: values.password.value
-      }
-      console.clear()
-      const local = new LS()
+      };
+      console.clear();
+      const local = new LS();
 
       login(payload)
         .then((res) => {
-          console.info(JSON.stringify(res, null, 2))
-          const token = res.data.token
-          local.save(KEYS.token, token)
+          console.info(JSON.stringify(res, null, 2));
+          const token = res.data.token;
+          local.save(KEYS.token, token);
+          navigate('/');
         })
         .catch((e) => {
-          console.error(JSON.stringify(e, null, 2))
-        })
+          console.error(JSON.stringify(e, null, 2));
+        });
     }
-  }
+  };
 
-  const handleGet = (e) => {
-    console.clear()
-    getUsers()
-      .then((res) => {
-        console.info(JSON.stringify(res, null, 2))
-      })
-      .catch((e) => {
-        console.error(JSON.stringify(e, null, 2))
-      })
-
-  }
-
-  const { email, password } = values
+  const { email, password } = values;
   return (
     <div className="container">
       <div>
@@ -113,7 +104,7 @@ export const Login = () => {
               placeholder="Enter email"
               value={email.value}
               onChange={handleChange}
-              data-testid = "email"
+              data-testid="email"
             />
             <small>{email.error}</small>
           </div>
@@ -132,11 +123,11 @@ export const Login = () => {
           <button type="button" className="submit" data-testid="submit-button" onClick={handleSubmit}>
             Login
           </button>
-          <button type="button" className="submit" onClick={handleGet}>
-            Get users
-          </button>
+          <div>
+            <p>Don't have an account? Click <Link to="/register">here</Link> to signup</p>
+          </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};

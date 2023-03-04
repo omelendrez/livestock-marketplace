@@ -6,7 +6,7 @@ export const isValidEmail = (email) => {
     );
 };
 
-export const isValidateUserName = (userName) => {
+export const isValidUsername = (userName) => {
   return String(userName)
     .toLowerCase()
     .match(

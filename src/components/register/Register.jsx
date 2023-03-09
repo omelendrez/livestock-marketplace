@@ -1,10 +1,14 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles.css";
-import { isValidEmail, isValidUsername } from "../../helpers/validations";
+import { isValidEmail } from "../../helpers/validations";
 
 const initialValues = {
-  username: {
+  firstName: {
+    value: '',
+    error: ''
+  },
+  lastName: {
     value: '',
     error: ''
   },
@@ -31,17 +35,6 @@ export const Register = () => {
     ids.forEach((id) => {
       const data = values[id];
       if (!data.value) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
-  const validateUserName = (ids) => {
-    const errMessage = 'Invalid username';
-    ids.forEach((id) => {
-      const data = values[id];
-      if (!isValidUsername(data.value)) {
         setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
         errorsCount.current++;
       }
@@ -96,30 +89,40 @@ export const Register = () => {
     errorsCount.current = 0;
     validatePasswordLength(['password'], 6);
     validateEmail(['email']);
-    validateUserName(['username']);
     validateConfirmPassword(['confirmPassword']);
-    validateNotEmpty(['username', 'email', 'password', 'confirmPassword']);
+    validateNotEmpty(['firstName', 'lastName', 'email', 'password', 'confirmPassword']);
     if (!errorsCount.current) {
       console.log(JSON.stringify(values, null, 2));
     }
   };
 
-  const { username, email, password, confirmPassword } = values;
+  const { firstName, lastName, email, password, confirmPassword } = values;
   return (
     <div className="container">
       <div>
         <form className="form" method="post">
           <h2>Register</h2>
-          <div className={`form-control ${username.error ? 'error' : ''}`}>
-            <label>Username</label>
+          <div className={`form-control ${firstName.error ? 'error' : ''}`}>
+            <label>First Name</label>
             <input
               type="text"
-              id="username"
-              placeholder="Enter Username"
-              value={username.value}
+              id="firstName"
+              placeholder="First Name"
+              value={firstName.value}
               onChange={handleChange}
             />
-            <small>{username.error}</small>
+            <small>{firstName.error}</small>
+          </div>
+          <div className={`form-control ${lastName.error ? 'error' : ''}`}>
+            <label>Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              placeholder="Last Name"
+              value={lastName.value}
+              onChange={handleChange}
+            />
+            <small>{lastName.error}</small>
           </div>
           <div className={`form-control ${email.error ? 'error' : ''}`}>
             <label>Email</label>

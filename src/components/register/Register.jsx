@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles.css";
-import { isValidEmail } from "../../helpers/validations";
+import { validateConfirmPassword, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers/validations";
 
 const initialValues = {
   firstName: {
@@ -30,51 +30,6 @@ export const Register = () => {
   const [values, setValues] = useState(initialValues);
   const errorsCount = useRef(0);
 
-  const validateNotEmpty = (ids) => {
-    const errMessage = 'This fields cannot be empty';
-    ids.forEach((id) => {
-      const data = values[id];
-      if (!data.value) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
-  const validateEmail = (ids) => {
-    const errMessage = 'Invalid email address';
-    ids.forEach((id) => {
-      const data = values[id];
-      if (!isValidEmail(data.value)) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
-  const validatePasswordLength = (ids, minLength) => {
-    const errMessage = `Password should be at least ${minLength} characters long`;
-    ids.forEach((id) => {
-      const data = values[id];
-      if (data.value.length < minLength) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
-  const validateConfirmPassword = (ids) => {
-    const errMessage = 'Passwords do not match';
-    ids.forEach((id) => {
-      const data = values[id];
-      console.log(data);
-      if (data.value !== values['password'].value) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
   const handleChange = (e) => {
     const { id, value } = e.target;
     const data = {
@@ -87,10 +42,10 @@ export const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     errorsCount.current = 0;
-    validatePasswordLength(['password'], 6);
-    validateEmail(['email']);
-    validateConfirmPassword(['confirmPassword']);
-    validateNotEmpty(['firstName', 'lastName', 'email', 'password', 'confirmPassword']);
+    validatePasswordLength(['password'], 5, setValues, values, errorsCount);
+    validateEmail(['email'], setValues, values, errorsCount);
+    validateConfirmPassword(['confirmPassword'], setValues, values, errorsCount);
+    validateNotEmpty(['firstName', 'lastName', 'email', 'password', 'confirmPassword'], setValues, values, errorsCount);
     if (!errorsCount.current) {
       console.log(JSON.stringify(values, null, 2));
     }

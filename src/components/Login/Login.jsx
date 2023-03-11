@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./styles.css";
-import { isValidEmail } from "../../helpers/validations";
+import { validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers/validations";
 import { login } from "../../services/user";
 import LS, { KEYS } from "../../helpers/localStorage";
 
@@ -21,39 +21,6 @@ export const Login = () => {
   const [values, setValues] = useState(initialValues);
   const errorsCount = useRef(0);
 
-  const validateNotEmpty = (ids) => {
-    const errMessage = 'This fields cannot be empty';
-    ids.forEach((id) => {
-      const data = values[id];
-      if (!data.value) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
-  const validateEmail = (ids) => {
-    const errMessage = 'Invalid email address';
-    ids.forEach((id) => {
-      const data = values[id];
-      if (!isValidEmail(data.value)) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
-  const validatePasswordLength = (ids, minLength) => {
-    const errMessage = `Password should be at least ${minLength} characters long`;
-    ids.forEach((id) => {
-      const data = values[id];
-      if (data.value.length < minLength) {
-        setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
-        errorsCount.current++;
-      }
-    });
-  };
-
   const handleChange = (e) => {
     const { id, value } = e.target;
     const data = {
@@ -66,9 +33,9 @@ export const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     errorsCount.current = 0;
-    validatePasswordLength(['password'], 5);
-    validateEmail(['email']);
-    validateNotEmpty(['email', 'password']);
+    validatePasswordLength(['password'], 5, setValues, values, errorsCount);
+    validateEmail(['email'], setValues, values, errorsCount);
+    validateNotEmpty(['email', 'password'], setValues, values, errorsCount);
     if (!errorsCount.current) {
       const payload = {
         email: values.email.value,

@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./styles.css";
-import { isValidEmail } from "../../helpers/validations";
+import { isValidEmail, LS, KEYS } from "../../helpers";
 import { login } from "../../services/user";
-import LS, { KEYS } from "../../helpers/localStorage";
+import { Modal } from "../modal/Modal";
+import { UserContext } from "../../context";
 
 const initialValues = {
   email: {
@@ -17,9 +17,13 @@ const initialValues = {
 };
 
 export const Login = () => {
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [values, setValues] = useState(initialValues);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState(false);
   const errorsCount = useRef(0);
+  const isMounted = useRef(true);
 
   const validateNotEmpty = (ids) => {
     const errMessage = 'This fields cannot be empty';
@@ -74,60 +78,81 @@ export const Login = () => {
         email: values.email.value,
         password: values.password.value
       };
-      console.clear();
-      const local = new LS();
 
+      const local = new LS();
+      setIsSubmitting(true);
       login(payload)
         .then((res) => {
-          console.info(JSON.stringify(res, null, 2));
           const token = res.data.token;
           local.save(KEYS.token, token);
+          isMounted.current = false;
+          setUser(res.data);
           navigate('/');
         })
         .catch((e) => {
-          console.error(JSON.stringify(e, null, 2));
+          setIsSubmitting(false);
+          setErrorModalMessage(e.code === "ERR_BAD_REQUEST"
+            ? 'You have entered an invalid username or password. Please double-check and try again.'
+            : e.message);
+          console.log(e);
+        })
+        .finally(() => {
+          if (isMounted.current)
+            setIsSubmitting(false);
         });
     }
   };
 
   const { email, password } = values;
   return (
-    <div className="container">
-      <div>
-        <form className="form" method="post">
-          <h2>Login</h2>
-          <div className={`form-control ${email.error ? 'error' : ''}`}>
-            <label>Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter email"
-              value={email.value}
-              onChange={handleChange}
-              data-testid="email"
-            />
-            <small>{email.error}</small>
-          </div>
-          <div className={`form-control ${password.error ? 'error' : ''}`}>
-            <label>Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter password"
-              value={password.value}
-              onChange={handleChange}
-              data-testid="password"
-            />
-            <small>{password.error}</small>
-          </div>
-          <button type="button" className="submit" data-testid="submit-button" onClick={handleSubmit}>
-            Login
-          </button>
-          <div>
-            <p>Don't have an account? Click <Link to="/register">here</Link> to signup</p>
-          </div>
-        </form>
-      </div>
-    </div>
+    <article>
+      <form>
+        <h2>Login</h2>
+
+        <label htmlFor="email">Email
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter email"
+            value={email.value}
+            onChange={handleChange}
+            aria-invalid={!!email.error}
+          />
+          <small>{email.error}</small>
+        </label>
+
+        <label htmlFor="password">Password
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+            value={password.value}
+            onChange={handleChange}
+            aria-invalid={!!password.error}
+          />
+          <small>{password.error}</small>
+        </label>
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          aria-busy={isSubmitting}
+        >
+          Login
+        </button>
+
+        <div>
+          <p>Don't have an account? Click <Link to="/register">here</Link> to signup</p>
+        </div>
+      </form>
+      <Modal
+        open={!!errorModalMessage}
+        title="Wrong credentials!"
+        type="error"
+        message={errorModalMessage}
+        toggle={setErrorModalMessage}
+        label="Try again"
+      />
+    </article>
   );
 };

@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import "./styles.css";
-import { isValidEmail, isValidUsername } from "../../helpers/validations";
+import { isValidEmail, isValidUsername } from "../../helpers";
 
 const initialValues = {
   username: {
@@ -24,6 +23,7 @@ const initialValues = {
 
 export const Register = () => {
   const [values, setValues] = useState(initialValues);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const errorsCount = useRef(0);
 
   const validateNotEmpty = (ids) => {
@@ -74,7 +74,6 @@ export const Register = () => {
     const errMessage = 'Passwords do not match';
     ids.forEach((id) => {
       const data = values[id];
-      console.log(data);
       if (data.value !== values['password'].value) {
         setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
         errorsCount.current++;
@@ -100,68 +99,80 @@ export const Register = () => {
     validateConfirmPassword(['confirmPassword']);
     validateNotEmpty(['username', 'email', 'password', 'confirmPassword']);
     if (!errorsCount.current) {
+      setIsSubmitting(true);
       console.log(JSON.stringify(values, null, 2));
     }
   };
 
   const { username, email, password, confirmPassword } = values;
   return (
-    <div className="container">
-      <div>
-        <form className="form" method="post">
-          <h2>Register</h2>
-          <div className={`form-control ${username.error ? 'error' : ''}`}>
-            <label>Username</label>
-            <input
-              type="text"
-              id="username"
-              placeholder="Enter Username"
-              value={username.value}
-              onChange={handleChange}
-            />
-            <small>{username.error}</small>
-          </div>
-          <div className={`form-control ${email.error ? 'error' : ''}`}>
-            <label>Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter email"
-              value={email.value}
-              onChange={handleChange}
-            />
-            <small>{email.error}</small>
-          </div>
-          <div className={`form-control ${password.error ? 'error' : ''}`}>
-            <label>Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter password"
-              value={password.value}
-              onChange={handleChange}
-            />
-            <small>{password.error}</small>
-          </div>
-          <div className={`form-control ${confirmPassword.error ? 'error' : ''}`}>
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              placeholder="Confirm password"
-              value={confirmPassword.value}
-              onChange={handleChange}
-            />
-            <small>{confirmPassword.error}</small>
-          </div>
-          <button type="button" className="submit" onClick={handleSubmit}>
-            Signup
-          </button>
-          <div>
-            <p>Already registered? Click <Link to="/login">here</Link> to login</p>
-          </div>
-        </form>
-      </div>
-    </div>
+    <article>
+      <form>
+        <h2>Sign up</h2>
+
+        <label htmlFor="username">
+          Username
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter Username"
+            value={username.value}
+            onChange={handleChange}
+            aria-invalid={!!username.error}
+          />
+          <small>{username.error}</small>
+        </label>
+
+        <label htmlFor="email">
+          Email
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter email"
+            value={email.value}
+            onChange={handleChange}
+            aria-invalid={!!email.error}
+          />
+          <small>{email.error}</small>
+        </label>
+
+        <label htmlFor="password">
+          Password
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+            value={password.value}
+            onChange={handleChange}
+            aria-invalid={!!password.error}
+          />
+          <small>{password.error}</small>
+        </label>
+
+        <label htmlFor="confirmPassword">
+          Confirm Password
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm password"
+            value={confirmPassword.value}
+            onChange={handleChange}
+            aria-invalid={!!confirmPassword.error}
+          />
+          <small>{confirmPassword.error}</small>
+        </label>
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          aria-busy={isSubmitting}
+        >
+          Signup
+        </button>
+        <div>
+          <p>Already registered? Click <Link to="/login">here</Link> to login</p>
+        </div>
+      </form>
+    </article>
   );
 };

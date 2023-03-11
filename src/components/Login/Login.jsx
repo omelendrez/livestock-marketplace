@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./styles.css";
-import { validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers/validations";
+import { LS, KEYS, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers";
+import { InputField } from "../shared/InputField";
 import { login } from "../../services/user";
-import LS, { KEYS } from "../../helpers/localStorage";
+import "./styles.css";
 
 const initialValues = {
   email: {
@@ -36,6 +36,7 @@ export const Login = () => {
     validatePasswordLength(['password'], 5, setValues, values, errorsCount);
     validateEmail(['email'], setValues, values, errorsCount);
     validateNotEmpty(['email', 'password'], setValues, values, errorsCount);
+
     if (!errorsCount.current) {
       const payload = {
         email: values.email.value,
@@ -46,7 +47,6 @@ export const Login = () => {
 
       login(payload)
         .then((res) => {
-          console.info(JSON.stringify(res, null, 2));
           const token = res.data.token;
           local.save(KEYS.token, token);
           navigate('/');
@@ -58,36 +58,32 @@ export const Login = () => {
   };
 
   const { email, password } = values;
+
   return (
     <div className="container">
       <div>
         <form className="form" method="post">
           <h2>Login</h2>
-          <div className={`form-control ${email.error ? 'error' : ''}`}>
-            <label>Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter email"
-              value={email.value}
-              onChange={handleChange}
-              data-testid="email"
-            />
-            <small>{email.error}</small>
-          </div>
-          <div className={`form-control ${password.error ? 'error' : ''}`}>
-            <label>Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter password"
-              value={password.value}
-              onChange={handleChange}
-              data-testid="password"
-            />
-            <small>{password.error}</small>
-          </div>
-          <button type="button" className="submit" data-testid="submit-button" onClick={handleSubmit}>
+
+          <InputField
+            type="email"
+            id="email"
+            label="Email"
+            placeholder="Enter email"
+            value={email}
+            onChange={handleChange}
+          />
+
+          <InputField
+            type="password"
+            id="password"
+            label="Password"
+            placeholder="Enter password"
+            value={password}
+            onChange={handleChange}
+          />
+
+          <button type="button" className="submit" onClick={handleSubmit}>
             Login
           </button>
           <div>

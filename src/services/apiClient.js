@@ -1,6 +1,6 @@
-import axios from 'axios'
-import LS, { KEYS } from '../helpers/localStorage';
-const local = new LS()
+import axios from 'axios';
+import { KEYS, LS } from '../helpers';
+const local = new LS();
 
 export const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -12,7 +12,7 @@ export const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
   config => {
-    const token = local.get(KEYS.token)
+    const token = local.get(KEYS.token);
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token;
     }
@@ -20,7 +20,7 @@ axiosClient.interceptors.request.use(
     return config;
   },
   error => {
-    Promise.reject(error)
+    Promise.reject(error);
   });
 
 axiosClient.interceptors.response.use(

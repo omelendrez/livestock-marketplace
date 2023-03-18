@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { KEYS, LS } from '../helpers';
-const local = new LS();
+import { KEYS, SP } from '../session';
+const session = new SP();
 
-export const axiosClient = axios.create({
+export const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'Accept': 'application/json',
@@ -10,28 +10,25 @@ export const axiosClient = axios.create({
   }
 });
 
-axiosClient.interceptors.request.use(
+api.interceptors.request.use(
   config => {
-    const token = local.get(KEYS.token);
+    const token = session.get(KEYS.token);
+    config.headers['Content-Type'] = 'application/json';
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token;
     }
-    // config.headers['Content-Type'] = 'application/json';
     return config;
   },
   error => {
     Promise.reject(error);
   });
 
-axiosClient.interceptors.response.use(
+api.interceptors.response.use(
   function (response) {
     return response;
   },
   function (error) {
     let res = error.response;
-    // if (res.status === 401) {
-    //   window.location.href = '/login';
-    // }
     console.error(`Looks like there was a problem.Status Code: ${res.status}`);
     return Promise.reject(error);
   }

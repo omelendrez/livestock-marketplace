@@ -1,5 +1,6 @@
-export const Modal = ({ type = 'info', open, toggle, title, message, label }) => {
+import './modal.css';
 
+export const Modal = ({ type = 'info', open, toggle, title, message, label }) => {
   const handleClose = (e) => {
     e.preventDefault();
     toggle(false);
@@ -14,7 +15,7 @@ export const Modal = ({ type = 'info', open, toggle, title, message, label }) =>
         </header>
         <p>{message}</p>
         <footer>
-          <button href="#confirm"
+          <button
             className="secondary"
             onClick={handleClose}
           >

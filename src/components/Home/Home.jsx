@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../context';
 import { getProfiles } from '../../services';
 import { Loading, Logo } from '../shared';
+import { SP } from "../../services";
 import './home.css'
 
 export const Home = () => {
@@ -32,6 +33,8 @@ export const Home = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
+    const session = new SP();
+    session.clear();
     setUser(null);
   };
 

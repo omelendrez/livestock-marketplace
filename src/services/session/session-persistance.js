@@ -1,13 +1,13 @@
 export class SP {
   save = function (key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+    sessionStorage.setItem(key, JSON.stringify(value));
   };
   get = function (key) {
-    return JSON.parse(localStorage.getItem(key));
+    return JSON.parse(sessionStorage.getItem(key));
   };
 
   clear = function () {
-    localStorage.clear();
+    sessionStorage.clear();
   };
 }
 

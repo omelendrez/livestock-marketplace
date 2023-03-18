@@ -52,7 +52,6 @@ export const Login = () => {
 
       login(payload)
         .then((res) => {
-          console.log('nada');
           const token = res.data.token;
           session.save(KEYS.token, token);
           const user = { ...res.data, token: undefined };

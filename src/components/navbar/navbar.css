@@ -1,0 +1,13 @@
+details summary[role=link]::after {
+  content:none;
+}
+
+/* By using [open] we can define different styles when the disclosure widget is open */
+details[open] summary::after {
+  content:none;
+}
+
+summary {
+  content: url(../../assets/hamburger.svg);
+  border: 1px solid var(--secondary);
+}

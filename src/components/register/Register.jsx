@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { InputField } from '../shared/InputField';
-import "./styles.css";
-import { validateConfirmPassword, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers/validations";
+import { InputField } from '../shared';
+import { validateConfirmPassword, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers";
 
 const initialValues = {
   firstName: {

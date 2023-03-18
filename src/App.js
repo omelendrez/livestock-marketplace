@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { UserContext } from "./context";
-import { KEYS, SP } from "./services";
+import { KEYS, SP } from "./services/session";
 import './App.css';
+import { Navbar } from "./components/navbar/Navbar";
 
 function App() {
   const session = new SP();
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <UserContext.Provider value={contextValues}>
+      {user?.id && <Navbar />}
       <RouterProvider router={router} />
     </UserContext.Provider>
   );

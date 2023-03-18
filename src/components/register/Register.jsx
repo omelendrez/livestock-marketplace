@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { InputField } from '../shared/InputField';
 import "./styles.css";
 import { validateConfirmPassword, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers/validations";
 
@@ -57,61 +58,48 @@ export const Register = () => {
       <div>
         <form className="form" method="post">
           <h2>Register</h2>
-          <div className={`form-control ${firstName.error ? 'error' : ''}`}>
-            <label>First Name</label>
-            <input
-              type="text"
-              id="firstName"
-              placeholder="First Name"
-              value={firstName.value}
-              onChange={handleChange}
-            />
-            <small>{firstName.error}</small>
-          </div>
-          <div className={`form-control ${lastName.error ? 'error' : ''}`}>
-            <label>Last Name</label>
-            <input
-              type="text"
-              id="lastName"
-              placeholder="Last Name"
-              value={lastName.value}
-              onChange={handleChange}
-            />
-            <small>{lastName.error}</small>
-          </div>
-          <div className={`form-control ${email.error ? 'error' : ''}`}>
-            <label>Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter email"
-              value={email.value}
-              onChange={handleChange}
-            />
-            <small>{email.error}</small>
-          </div>
-          <div className={`form-control ${password.error ? 'error' : ''}`}>
-            <label>Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter password"
-              value={password.value}
-              onChange={handleChange}
-            />
-            <small>{password.error}</small>
-          </div>
-          <div className={`form-control ${confirmPassword.error ? 'error' : ''}`}>
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              placeholder="Confirm password"
-              value={confirmPassword.value}
-              onChange={handleChange}
-            />
-            <small>{confirmPassword.error}</small>
-          </div>
+
+          <InputField
+            type="text"
+            id="firstName"
+            label="FirstName"
+            placeholder="First Name"
+            value={firstName}
+            onChange={handleChange}
+          />
+          <InputField
+            type="text"
+            id="lastName"
+            label="LastName"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={handleChange}
+          />
+          <InputField
+            type="email"
+            id="email"
+            label="email"
+            placeholder="Enter Email"
+            value={email}
+            onChange={handleChange}
+          />
+          <InputField
+            type="password"
+            id="password"
+            label="Password"
+            placeholder="Password"
+            value={password}
+            onChange={handleChange}
+          />
+          <InputField
+            type="password"
+            id="confirmPassword"
+            label="Confirm Password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={handleChange}
+          />
+
           <button type="button" className="submit" onClick={handleSubmit}>
             Signup
           </button>

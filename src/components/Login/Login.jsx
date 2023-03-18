@@ -1,8 +1,8 @@
 import { useRef, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LS, KEYS, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers";
+import { validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers";
 import { InputField, Modal } from "../shared";
-import { login } from "../../services";
+import { login, SP, KEYS } from "../../services";
 import { UserContext } from "../../context";
 
 const initialValues = {
@@ -11,7 +11,7 @@ const initialValues = {
     error: ''
   },
   password: {
-    value: '12345',
+    value: '123456',
     error: ''
   },
 };
@@ -36,6 +36,7 @@ export const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const session = new SP();
     errorsCount.current = 0;
     validatePasswordLength(['password'], 5, setValues, values, errorsCount);
     validateEmail(['email'], setValues, values, errorsCount);
@@ -46,29 +47,31 @@ export const Login = () => {
         email: values.email.value,
         password: values.password.value
       };
-      console.clear();
-      const local = new LS();
 
       setIsSubmitting(true);
 
       login(payload)
         .then((res) => {
+          console.log('nada');
           const token = res.data.token;
-          local.save(KEYS.token, token);
+          session.save(KEYS.token, token);
+          const user = { ...res.data, token: undefined };
+          session.save(KEYS.user, user);
           isMounted.current = false;
           setUser(res.data);
           navigate('/');
         })
         .catch((e) => {
-          setIsSubmitting(false);
-          setErrorModalMessage(e.code === "ERR_BAD_REQUEST"
+          const message = e.code === "ERR_BAD_REQUEST"
             ? 'You have entered an invalid username or password. Please double-check and try again.'
-            : e.message);
-          console.error(JSON.stringify(e, null, 2));
+            : e.message;
+
+          setErrorModalMessage(message);
         })
         .finally(() => {
-          if (isMounted.current)
+          if (isMounted.current) {
             setIsSubmitting(false);
+          }
         });
     }
   };
@@ -77,38 +80,36 @@ export const Login = () => {
 
   return (
     <article>
-      <form className="form" method="post">
-        <h2>Login</h2>
+      <h2>Login</h2>
 
-        <InputField
-          type="email"
-          id="email"
-          label="Email"
-          placeholder="Enter email"
-          value={email}
-          onChange={handleChange}
-        />
+      <InputField
+        type="email"
+        id="email"
+        label="Email"
+        placeholder="Enter email"
+        value={email}
+        onChange={handleChange}
+      />
 
-        <InputField
-          type="password"
-          id="password"
-          label="Password"
-          placeholder="Enter password"
-          value={password}
-          onChange={handleChange}
-        />
+      <InputField
+        type="password"
+        id="password"
+        label="Password"
+        placeholder="Enter password"
+        value={password}
+        onChange={handleChange}
+      />
 
-        <button
-          type="button"
-          aria-busy={isSubmitting}
-          onClick={handleSubmit}
-        >
-          Login
-        </button>
-        <div>
-          <p>Don't have an account? Click <Link to="/register">here</Link> to signup</p>
-        </div>
-      </form>
+      <button
+        type="button"
+        aria-busy={isSubmitting}
+        onClick={handleSubmit}
+      >
+        Login
+      </button>
+      <div>
+        <p>Don't have an account? Click <Link to="/register">here</Link> to signup</p>
+      </div>
       <Modal
         open={!!errorModalMessage}
         title="Wrong credentials!"

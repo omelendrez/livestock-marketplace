@@ -1,13 +1,36 @@
-details summary[role=link]::after {
-  content:none;
+nav {
+  background-color: var(--primary-hover);
 }
 
-/* By using [open] we can define different styles when the disclosure widget is open */
-details[open] summary::after {
-  content:none;
+nav > * {
+  color: #fff;
 }
 
 summary {
   content: url(../../assets/hamburger.svg);
-  border: 1px solid var(--secondary);
+}
+
+@keyframes details-show {
+  from {
+    opacity:0;
+    transform: var(--details-translate, translateY(-0.5em));
+  }
+}
+
+details[open] > *:not(summary) {
+  animation: details-show 150ms ease-in-out;
+}
+
+nav .user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav .logout-button {
+  content: url(../../assets/logout.svg);
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  margin-left: .5rem;
 }

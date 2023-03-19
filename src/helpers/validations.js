@@ -51,7 +51,6 @@ export const validateConfirmPassword = (ids, setValues, values, errorsCount) => 
   const errMessage = 'Passwords do not match';
   ids.forEach((id) => {
     const data = values[id];
-    console.log(data);
     if (data.value !== values['password'].value) {
       setValues(values => ({ ...values, [id]: { ...data, error: data.error || errMessage } }));
       errorsCount.current++;

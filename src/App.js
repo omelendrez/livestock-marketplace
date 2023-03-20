@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router";
+import { AppRoutes } from "./routes";
 import { UserContext } from "./context";
 import { KEYS, SP } from "./services/session";
 import './App.css';
@@ -18,7 +17,7 @@ function App() {
   return (
     <UserContext.Provider value={contextValues}>
       {user?.id && <Navbar />}
-      <RouterProvider router={router} />
+      <AppRoutes />
     </UserContext.Provider>
   );
 }

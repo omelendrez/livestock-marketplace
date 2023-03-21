@@ -1,1 +1,2 @@
-export * from './validations'
+export * from './log';
+export * from './validations';

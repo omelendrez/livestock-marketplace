@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { InputField } from '../shared';
-import { validateConfirmPassword, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers";
+import { log, validateConfirmPassword, validateEmail, validateNotEmpty, validatePasswordLength } from "../../helpers";
 
 const initialValues = {
   firstName: {
@@ -47,7 +47,7 @@ export const Register = () => {
     validateConfirmPassword(['confirmPassword'], setValues, values, errorsCount);
     validateNotEmpty(['firstName', 'lastName', 'email', 'password', 'confirmPassword'], setValues, values, errorsCount);
     if (!errorsCount.current) {
-      console.log(JSON.stringify(values, null, 2));
+      log.info(JSON.stringify(values, null, 2));
     }
   };
 

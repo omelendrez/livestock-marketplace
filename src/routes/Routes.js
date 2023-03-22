@@ -1,16 +1,9 @@
-
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Home, Login, Register, Dashboard } from '../pages';
 import { NotFound } from '../components';
 import { useContext } from "react";
 import { UserContext } from "../context";
-
-const ProtectedRoute = ({ user, children }) => {
-  if (!user?.id) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
+import { ProtectedRoute } from "../guard";
 
 export const AppRoutes = () => {
   const { user } = useContext(UserContext);
